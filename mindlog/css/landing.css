@@ -40,6 +40,71 @@
   padding: 96px 0 72px;
   text-align: center;
 }
+/* ── Theme Dropdown ── */
+.theme-dropdown-container {
+  position: relative;
+  display: inline-block;
+  margin-left: 4px;
+}
+
+.l-theme-btn {
+  background: transparent;
+  border: 1px solid var(--muted);
+  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 1.1rem;
+  transition: var(--transition);
+}
+
+.l-theme-btn:hover {
+  border-color: var(--primary);
+  background: var(--bg);
+}
+
+.theme-dropdown-menu {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: var(--bg);
+  border: 1px solid var(--muted);
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  min-width: 170px;
+  display: none; /* Hidden by default */
+  flex-direction: column;
+  padding: 8px 0;
+  z-index: 300;
+}
+
+.theme-dropdown-menu.show {
+  display: flex;
+  animation: fadeUp 0.2s ease;
+}
+
+.theme-dd-btn {
+  background: transparent;
+  border: none;
+  padding: 10px 16px;
+  text-align: left;
+  font-family: var(--font-b);
+  font-size: 0.85rem;
+  color: var(--text);
+  cursor: pointer;
+  transition: background 0.2s;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.theme-dd-btn:hover {
+  background: var(--primary-l);
+  color: var(--primary);
+}
 .l-badge {
   display: inline-flex;
   align-items: center;
