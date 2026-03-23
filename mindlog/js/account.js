@@ -137,7 +137,7 @@ function clearAllData() {
 }
 
 // ── Profile chip display ──────────────────────
-function renderProfileChips(containerId, selected, allLabels) {
+function renderProfileChips(containerId, selected) { // Removed allLabels
   const el = document.getElementById(containerId);
   if (!el) return;
   // Map label display to values
