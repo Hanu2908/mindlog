@@ -1,13 +1,13 @@
 // MindLog — Life Tracker & Charts
 'use strict';
 
-var activeTab = 'weekly'; // declared here — safe default
+var trackerTab = 'weekly'; // Changed from activeTab to prevent global collision
 
 // ═══════════════════════════════════════════════
 // LIFE TRACKER
 // ═══════════════════════════════════════════════
 function setTab(tab,btn) {
-  activeTab=tab;
+  trackerTab=tab;
   document.querySelectorAll(".tab-btn").forEach(b=>b.classList.remove("active"));
   btn.classList.add("active");
   refreshTracker();
@@ -19,7 +19,7 @@ function refreshTracker() {
   if (!entries.length) { empty.style.display="block"; return; }
   empty.style.display="none";
   const cuts={weekly:7,monthly:30,yearly:365};
-  const cutDate=new Date(); cutDate.setDate(cutDate.getDate()-cuts[activeTab]);
+  const cutDate=new Date(); cutDate.setDate(cutDate.getDate()-cuts[trackerTab]);
   const filtered=entries.filter(e=>new Date(e.timestamp)>=cutDate);
   const streak=calcStreak(entries);
   const realFiltered = filtered.filter(function(e){ return !e.quick_checkin; });
@@ -29,23 +29,27 @@ function refreshTracker() {
   document.getElementById("ts-mood").textContent=avgMood;
   document.getElementById("ts-streak").textContent=streak;
   document.getElementById("ts-count").textContent=realFiltered.length;
-  document.getElementById("ts-count-sub").textContent="this "+activeTab.replace("ly","");
+  document.getElementById("ts-count-sub").textContent="this "+trackerTab.replace("ly","");
   const best=[...realFiltered].sort((a,b)=>b.mood_rating-a.mood_rating)[0];
   if(best){
     const bd=new Date(best.date+'T12:00:00');
     const fmtDate=bd.toLocaleDateString('en-IN',{month:'short',day:'numeric',year:'numeric'});
     document.getElementById("bd-date").textContent=fmtDate;document.getElementById("bd-num").textContent=best.mood_rating;document.getElementById("best-day-strip").style.display="flex";}
   else document.getElementById("best-day-strip").style.display="none";
-  buildLineChart(filtered); buildHeatmap(entries); buildDonut(filtered); buildTrackerInsight(filtered); buildStreakHistory(entries); buildEmotionBreakdown(filtered);
+  
+  // FIXED: Passed `entries` into buildLineChart to prevent ReferenceError on Yearly view
+  buildLineChart(filtered, entries); 
+  buildHeatmap(entries); buildDonut(filtered); buildTrackerInsight(filtered); buildStreakHistory(entries); buildEmotionBreakdown(filtered);
 }
 
-function buildLineChart(filtered) {
+// FIXED: Added `entries` parameter
+function buildLineChart(filtered, entries) {
   var svg = document.getElementById('line-svg');
   if (!svg) return;
   var W=900,H=200,PL=44,PR=24,PT=20,PB=36,gW=W-PL-PR,gH=H-PT-PB;
   var pts = [];
 
-  if (activeTab === 'weekly') {
+  if (trackerTab === 'weekly') {
     for (var i=0; i<7; i++) {
       var d = new Date(); d.setDate(d.getDate()-6+i);
       var k = d.toISOString().split('T')[0];
@@ -58,7 +62,7 @@ function buildLineChart(filtered) {
         val: e ? e.mood_rating : null,
       });
     }
-  } else if (activeTab === 'monthly') {
+  } else if (trackerTab === 'monthly') {
     var weeks = ['W1','W2','W3','W4'];
     weeks.forEach(function(w,i) {
       var wk = filtered.slice(Math.floor(i*filtered.length/4), Math.floor((i+1)*filtered.length/4));
@@ -295,7 +299,7 @@ function buildTrackerInsight(filtered) {
   }
   const avgMood  = (real.reduce((a,e) => a + (e.mood_rating||5), 0) / real.length).toFixed(1);
   const avgStress= (real.reduce((a,e) => a + (e.stress_level||5), 0) / real.length).toFixed(1);
-  const period   = activeTab === 'weekly' ? 'week' : activeTab === 'monthly' ? 'month' : 'year';
+  const period   = trackerTab === 'weekly' ? 'week' : trackerTab === 'monthly' ? 'month' : 'year';
 
   // Top emotion
   const emCounts = {};
