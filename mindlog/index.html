@@ -200,17 +200,28 @@
             MindLog
           </div>
           <div style="display: flex; gap: 9px; align-items: center">
-            <button onclick="checkReturningUser()" class="l-signin-btn">
-              Continue where you left off
-            </button>
-            <button
-              onclick="goToOnboard()"
-              class="btn-primary"
-              style="padding: 8px 20px; font-size: 0.83rem"
-            >
-              Get Started
-            </button>
-          </div>
+  <button onclick="checkReturningUser()" class="l-signin-btn">
+    Continue where you left off
+  </button>
+  <button
+    onclick="goToOnboard()"
+    class="btn-primary"
+    style="padding: 8px 20px; font-size: 0.83rem"
+  >
+    Get Started
+  </button>
+  
+  <div class="theme-dropdown-container">
+    <button class="l-theme-btn" onclick="toggleLandingTheme(event)" title="Change Theme">
+      🎨
+    </button>
+    <div class="theme-dropdown-menu" id="l-theme-menu">
+      <button class="theme-dd-btn" onclick="applyTheme('warm'); toggleLandingTheme()">🌸 Warm Blossom</button>
+      <button class="theme-dd-btn" onclick="applyTheme('cool'); toggleLandingTheme()">❄️ Cool Periwinkle</button>
+      <button class="theme-dd-btn" onclick="applyTheme('dark'); toggleLandingTheme()">🌲 Dark Forest</button>
+    </div>
+  </div>
+</div>
         </div>
       </nav>
 
