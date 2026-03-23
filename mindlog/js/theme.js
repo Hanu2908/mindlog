@@ -18,6 +18,20 @@ function loadSavedTheme() {
   const saved = localStorage.getItem(THEME_KEY) || DEFAULT_THEME;
   applyTheme(saved);
 }
+// ── Landing Page Dropdown Logic ────────────────
+function toggleLandingTheme(e) {
+  if (e) e.stopPropagation(); // Prevents the click from immediately triggering the close listener
+  const menu = document.getElementById('l-theme-menu');
+  if (menu) menu.classList.toggle('show');
+}
+
+// Close the dropdown when clicking anywhere else on the screen
+document.addEventListener('click', function(e) {
+  const menu = document.getElementById('l-theme-menu');
+  if (menu && menu.classList.contains('show') && !e.target.closest('.theme-dropdown-container')) {
+    menu.classList.remove('show');
+  }
+});
 
 // ── Update swatch selection in account page ───
 function updateThemeSwatchUI(name) {
