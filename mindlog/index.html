@@ -1,0 +1,1980 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, interactive-widget=resizes-content"
+    />
+    <title>MindLog — AI Wellness Journal for Students</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&display=swap"
+      rel="stylesheet"
+    />
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="css/base.css" />
+    <link rel="stylesheet" href="css/themes.css" />
+    <link rel="stylesheet" href="css/landing.css" />
+    <link rel="stylesheet" href="css/onboard.css" />
+    <link rel="stylesheet" href="css/app.css" />
+  </head>
+  <body>
+    <div class="toast" id="toast"></div>
+
+    <!-- MODALS -->
+    <div
+      class="modal-ov"
+      id="modal-api"
+      style="display: none"
+      onclick="if (event.target === this) closeApiModal();"
+    >
+      <div class="modal-box">
+        <p class="modal-title">Configure API Key 🔑</p>
+        <p class="modal-sub">
+          Visit
+          <a
+            class="modal-link"
+            href="https://aistudio.google.com"
+            target="_blank"
+            >aistudio.google.com</a
+          >
+          → Get API Key → Create. Stored only in your browser session.
+        </p>
+        <input
+          class="fld"
+          id="api-key-input"
+          type="password"
+          placeholder="AIzaSy..."
+          onkeydown="if (event.key === 'Enter') saveApiKey();"
+          style="margin-bottom: 10px"
+        />
+        <div class="result-box" id="api-result"></div>
+        <button
+          class="btn-primary"
+          id="api-save-btn"
+          onclick="saveApiKey()"
+          style="
+            width: 100%;
+            padding: 13px;
+            border-radius: 99px;
+            font-size: 0.91rem;
+            margin-top: 9px;
+          "
+        >
+          Save and Continue
+        </button>
+      </div>
+    </div>
+    <div
+      class="modal-ov"
+      id="modal-upcoming"
+      style="display: none"
+      onclick="if (event.target === this) closeUpcomingModal();"
+    >
+      <div class="modal-box" style="max-width: 400px">
+        <p class="modal-title" style="font-size: 1.2rem; margin-bottom: 15px">
+          Add Upcoming Event 📅
+        </p>
+        <div class="fld-group">
+          <label class="fld-label">Event</label
+          ><input
+            class="fld"
+            id="up-label-inp"
+            placeholder="e.g. Physics Exam"
+          />
+        </div>
+        <div class="fld-group">
+          <label class="fld-label">Date</label
+          ><input class="fld" id="up-date-inp" type="date" />
+        </div>
+        <div style="display: flex; gap: 9px; margin-top: 8px">
+          <button
+            onclick="closeUpcomingModal()"
+            style="
+              flex: 1;
+              padding: 11px;
+              border-radius: 99px;
+              border: 1.5px solid var(--muted);
+              background: transparent;
+              font-family: var(--font-b);
+              font-size: 0.86rem;
+              font-weight: 700;
+              color: var(--text-m);
+              cursor: pointer;
+            "
+          >
+            Cancel
+          </button>
+          <button
+            onclick="saveUpcoming()"
+            class="btn-primary"
+            style="
+              flex: 1;
+              padding: 11px;
+              border-radius: 99px;
+              font-size: 0.86rem;
+            "
+          >
+            Add
+          </button>
+        </div>
+      </div>
+    </div>
+    <!-- API KEY MODAL (LEFT DRAWER) -->
+    <div
+      id="modal-api"
+      style="display: none"
+      onclick="if (event.target === this) closeApiModal();"
+    >
+      <div class="modal-box">
+        <p class="modal-title">Configure API Key 🔑</p>
+
+        <p class="modal-sub">
+          Visit
+          <a
+            class="modal-link"
+            href="https://aistudio.google.com"
+            target="_blank"
+          >
+            aistudio.google.com
+          </a>
+          → Get API Key → Create. Stored only in your browser session.
+        </p>
+
+        <input
+          class="fld"
+          id="api-key-input"
+          type="password"
+          placeholder="AIzaSy..."
+          onkeydown="if (event.key === 'Enter') saveApiKey();"
+          style="margin-bottom: 10px"
+        />
+
+        <div class="result-box" id="api-result"></div>
+
+        <button
+          class="btn-primary"
+          id="api-save-btn"
+          onclick="saveApiKey()"
+          style="
+            width: 95%;
+            padding: 13px;
+            border-radius: 99px;
+            margin-top: 9px;
+            text-align: center;
+            justify-content: center;
+            font-size: 20px;
+          "
+        >
+          Save and Continue
+        </button>
+
+        <button
+          onclick="closeApiModal()"
+          style="
+            width: 100%;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 99px;
+            border: 1px solid var(--muted);
+            background: transparent;
+            cursor: pointer;
+          "
+        >
+          Close
+        </button>
+      </div>
+    </div>
+    <!-- LANDING -->
+    <div id="screen-landing" class="screen active">
+      <!-- ── NAVBAR ── -->
+      <nav class="l-nav">
+        <div class="l-nav-inner">
+          <div class="l-logo">
+            <div class="l-logo-mark">🧠</div>
+            MindLog
+          </div>
+          <div style="display: flex; gap: 9px; align-items: center">
+            <button onclick="checkReturningUser()" class="l-signin-btn">
+              Continue where you left off
+            </button>
+            <button
+              onclick="goToOnboard()"
+              class="btn-primary"
+              style="padding: 8px 20px; font-size: 0.83rem"
+            >
+              Get Started
+            </button>
+          </div>
+        </div>
+      </nav>
+
+      <!-- ── HERO ── -->
+      <section class="l-hero">
+        <div class="wrap">
+          <div class="l-badge anim-fade-up">
+            🧠 Built for engineering students
+          </div>
+          <h1 class="l-title anim-fade-up" style="animation-delay: 0.07s">
+            Your mind deserves the same effort<br />you give your
+            <em>academics.</em>
+          </h1>
+          <p class="l-sub anim-fade-up" style="animation-delay: 0.14s">
+            MindLog is a Gemini AI-powered wellness journal that understands
+            exam pressure, hostel life, and the real weight of engineering
+            college — and helps you make sense of it all.
+          </p>
+          <div class="l-cta-row anim-fade-up" style="animation-delay: 0.2s">
+            <button onclick="goToOnboard()" class="btn-primary l-cta-primary">
+              Start Now — It's Free →
+            </button>
+            <button
+              onclick="
+                document
+                  .getElementById('how-sec')
+                  .scrollIntoView({ behavior: 'smooth' })
+              "
+              class="l-cta-secondary"
+            >
+              See How It Works
+            </button>
+          </div>
+          <p class="l-note anim-fade-up" style="animation-delay: 0.25s">
+            🔒 Everything stays on your device. Free forever.
+          </p>
+        </div>
+      </section>
+
+      <!-- ── HOW IT WORKS ── -->
+      <section class="l-section" id="how-sec">
+        <div class="wrap">
+          <p class="l-label">How It Works</p>
+          <h2 class="l-section-title">Three steps to understand yourself</h2>
+          <p class="l-section-sub">
+            From a rough day to a clear insight — in under a minute.
+          </p>
+          <div class="steps-grid">
+            <div class="step-connector"></div>
+            <div class="l-dark-card step-card">
+              <div class="step-num">1</div>
+              <span class="step-emoji">✍️</span>
+              <p class="step-title">Write Freely</p>
+              <p class="step-body">
+                Type anything. English, Hindi, Hinglish — no rules, no
+                judgement. Even three sentences is enough.
+              </p>
+            </div>
+            <div class="l-dark-card step-card">
+              <div class="step-num">2</div>
+              <span class="step-emoji">🧠</span>
+              <p class="step-title">Gemini AI Analyses</p>
+              <p class="step-body">
+                Gemini AI identifies your stress level, dominant emotion, root
+                cause, and what you actually need right now.
+              </p>
+            </div>
+            <div class="l-dark-card step-card">
+              <div class="step-num">3</div>
+              <span class="step-emoji">🌱</span>
+              <p class="step-title">Grow Over Time</p>
+              <p class="step-body">
+                Track mood patterns. Get a Wellbeing Score. Spot your triggers.
+                Get expert resources tailored to your state.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FEATURES ── -->
+      <section class="l-section">
+        <div class="wrap">
+          <p class="l-label">Features</p>
+          <h2 class="l-section-title">
+            Everything you need, nothing you don't
+          </h2>
+          <p class="l-section-sub">
+            Personalised by your stressors and interests — built for engineering
+            college life.
+          </p>
+
+          <!-- Top 2 hero feature cards -->
+          <div class="feats-hero-row">
+            <div class="l-dark-card feat-hero-card feat-warm">
+              <div class="feat-num">01</div>
+              <div class="feat-hero-icon">🔍</div>
+              <p class="feat-title">Deep Emotional Analysis</p>
+              <p class="feat-body">
+                Gemini AI reads your free-form entry and returns stress level,
+                dominant emotion, root cause, energy level, and a personalised
+                action — all in under 15 seconds.
+              </p>
+              <div class="feat-tag feat-tag-warm">Powered by Gemini AI</div>
+            </div>
+            <div class="l-dark-card feat-hero-card feat-cool">
+              <div class="feat-num">02</div>
+              <div class="feat-hero-icon">🎯</div>
+              <p class="feat-title">Personalised to You</p>
+              <p class="feat-body">
+                Tell us your stressors and interests once during setup. Every
+                analysis, recommendation, and action is then tailored
+                specifically to your profile — not generic wellness advice.
+              </p>
+              <div class="feat-tag feat-tag-cool">
+                Stressors · Interests · Context
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom 4 smaller cards -->
+          <div class="feats-grid feats-small-grid">
+            <div class="l-dark-card feat-small-card feat-warm">
+              <div class="feat-small-top">
+                <span class="feat-num-sm">03</span>
+                <span class="feat-small-icon">📊</span>
+              </div>
+              <p class="feat-title">Pattern Tracking</p>
+              <p class="feat-body">
+                Mood trends, heatmaps, emotion frequency, Wellbeing Score —
+                weekly, monthly, yearly.
+              </p>
+            </div>
+            <div class="l-dark-card feat-small-card feat-cool">
+              <div class="feat-small-top">
+                <span class="feat-num-sm">04</span>
+                <span class="feat-small-icon">🎓</span>
+              </div>
+              <p class="feat-title">17 Verified Experts</p>
+              <p class="feat-body">
+                Mental health YouTube channels matched contextually to your
+                detected emotional state.
+              </p>
+            </div>
+            <div class="l-dark-card feat-small-card feat-warm">
+              <div class="feat-small-top">
+                <span class="feat-num-sm">05</span>
+                <span class="feat-small-icon">🔒</span>
+              </div>
+              <p class="feat-title">Completely Private</p>
+              <p class="feat-body">
+                All data stays on your device. No servers, no cloud sync, no
+                accounts needed.
+              </p>
+            </div>
+            <div class="l-dark-card feat-small-card feat-cool">
+              <div class="feat-small-top">
+                <span class="feat-num-sm">06</span>
+                <span class="feat-small-icon">⚡</span>
+              </div>
+              <p class="feat-title">Built for Students</p>
+              <p class="feat-body">
+                Understands exam pressure, hostel life, placement anxiety, and
+                family separation.
+              </p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── CTA ── -->
+      <section style="padding: 48px 0">
+        <div class="wrap">
+          <div
+            class="l-dark-card l-cta-card"
+            style="text-align: center; padding: 48px 32px"
+          >
+            <p class="l-label" style="margin-bottom: 10px">Ready to begin?</p>
+            <h2
+              style="
+                font-family: var(--font-h);
+                font-size: clamp(1.5rem, 4vw, 2.2rem);
+                font-weight: 800;
+                color: var(--text);
+                margin-bottom: 12px;
+                line-height: 1.2;
+              "
+            >
+              Take five minutes for your mind today.
+            </h2>
+            <p
+              style="
+                font-size: 0.9rem;
+                color: var(--text-m);
+                margin-bottom: 28px;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+                line-height: 1.7;
+              "
+            >
+              Your first entry takes less than five minutes. What you learn
+              about yourself might surprise you.
+            </p>
+            <button onclick="goToOnboard()" class="btn-primary l-cta-primary">
+              Start Now — It's Free →
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── FOOTER ── -->
+      <footer class="l-footer">
+        <div class="wrap">
+          <div class="l-footer-inner">
+            <div class="l-logo">
+              <div
+                class="l-logo-mark"
+                style="
+                  width: 25px;
+                  height: 25px;
+                  font-size: 15px;
+                  border-radius: 8px;
+                "
+              >
+                🧠
+              </div>
+              MindLog
+            </div>
+
+            <div class="l-footer-links">
+              <span class="l-footer-link" onclick="goToOnboard()">
+                Get Started
+              </span>
+              <span class="l-footer-link" onclick="checkReturningUser()">
+                Continue where you left off
+              </span>
+            </div>
+
+            <p class="l-footer-dis">
+              MindLog is a self-reflection and wellness tool, not a substitute
+              for professional mental health support. Tele-MANAS:
+              <strong>1-800-891-4416</strong>
+            </p>
+
+            <p style="font-size: 0.79rem; color: var(--text-l)">
+              Built for Students
+            </p>
+
+            <p style="font-size: 0.79rem; color: var(--text-l)">
+              © <span id="current-year"></span> MindLog. All rights reserved.
+            </p>
+          </div>
+        </div>
+      </footer>
+
+      <!-- JS for dynamic year -->
+      <script>
+        document.getElementById("current-year").textContent =
+          new Date().getFullYear();
+      </script>
+    </div>
+
+    <!-- ONBOARDING -->
+    <div id="screen-onboard" class="screen">
+      <div class="ob-bg">
+        <div class="ob-wrap">
+          <div class="ob-card">
+            <div id="ob-s1">
+              <div class="ob-bar">
+                <div class="ob-dot active" id="ob-d1"></div>
+                <div class="ob-dot" id="ob-d2"></div>
+                <div class="ob-dot" id="ob-d3"></div>
+              </div>
+              <div class="ob-icon">👋</div>
+              <h2 class="ob-title">Personalise your experience</h2>
+              <p class="ob-sub">
+                Tell us about yourself so MindLog can speak to your specific
+                situation.
+              </p>
+              <div class="fld-group">
+                <label class="fld-label">Your First Name</label
+                ><input
+                  class="fld"
+                  id="ob-name"
+                  type="text"
+                  placeholder="e.g. Rahul"
+                  autocomplete="given-name"
+                />
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">Year of Study</label
+                ><select class="fld" id="ob-year">
+                  <option value="">Select year</option>
+                  <option>1st Year</option>
+                  <option>2nd Year</option>
+                  <option>3rd Year</option>
+                  <option>4th Year</option>
+                </select>
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">Branch / Department</label
+                ><input
+                  class="fld"
+                  id="ob-branch"
+                  type="text"
+                  placeholder="e.g. Computer Science"
+                />
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">Living Situation</label>
+                <div class="radio-group">
+                  <label
+                    class="rpill"
+                    onclick="pickRadio('ob-living', 'hostel', this)"
+                    ><input type="radio" name="robliv" />🏠 Hostel</label
+                  >
+                  <label
+                    class="rpill"
+                    onclick="pickRadio('ob-living', 'day', this)"
+                    ><input type="radio" name="robliv" />🚌 Day Scholar</label
+                  >
+                  <label
+                    class="rpill"
+                    onclick="pickRadio('ob-living', 'pg', this)"
+                    ><input type="radio" name="robliv" />🏢 PG / Rented</label
+                  >
+                </div>
+                <input type="hidden" id="ob-living" value="" />
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">City</label
+                ><input
+                  class="fld"
+                  id="ob-city"
+                  type="text"
+                  placeholder="e.g. Jaipur"
+                />
+              </div>
+              <button
+                onclick="obNext()"
+                class="btn-primary"
+                style="
+                  width: 95%;
+                  padding: 13px;
+                  border-radius: 99px;
+                  margin-top: 6px;
+                  text-align: center;
+                  justify-content: center;
+                  font-size: 20px;
+                "
+              >
+                Continue →
+              </button>
+              <p
+                class="ob-step-lbl"
+                style="text-align: center; margin-top: 10px"
+              >
+                Step 1 of 2
+              </p>
+            </div>
+            <div id="ob-s2" style="display: none">
+              <div class="ob-bar">
+                <div class="ob-dot done"></div>
+                <div class="ob-dot active"></div>
+                <div class="ob-dot" id="ob-d3b"></div>
+              </div>
+              <div class="ob-icon">🔑</div>
+              <h2 class="ob-title">Set up your AI key</h2>
+              <p class="ob-sub">
+                MindLog uses Google's Gemini AI. You need a free API key — takes
+                about 2 minutes to get.
+              </p>
+              <div class="steps-guide">
+                <p class="steps-guide-title">How to get your free key:</p>
+                <div class="sgi">
+                  <span class="sgi-num">1</span
+                  ><span
+                    >Go to
+                    <a
+                      href="https://aistudio.google.com/api-keys"
+                      target="_blank"
+                      style="color: var(--primary); font-weight: 700"
+                      >aistudio.google.com</a
+                    ></span
+                  >
+                </div>
+                <div class="sgi">
+                  <span class="sgi-num">2</span
+                  ><span>Sign in with your Google account</span>
+                </div>
+                <div class="sgi">
+                  <span class="sgi-num">3</span
+                  ><span>Click "Get API Key" → "Create API Key" → Copy</span>
+                </div>
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">Paste Your API Key</label
+                ><input
+                  class="fld"
+                  id="ob-apikey"
+                  type="password"
+                  placeholder="AIzaSy..."
+                  onkeydown="if (event.key === 'Enter') obVerify();"
+                />
+              </div>
+              <div class="result-box" id="ob-result"></div>
+              <button
+                onclick="obVerify()"
+                class="btn-primary"
+                id="ob-verify-btn"
+                style="
+                  width: 95%;
+                  padding: 13px;
+                  border-radius: 99px;
+                  margin-top: 10px;
+                  text-align: center;
+                  justify-content: center;
+                  font-size: 20px;
+                "
+              >
+                Verify & Continue →
+              </button>
+              <div class="ob-footer">
+                <span class="ob-back" onclick="obBack()">← Back</span
+                ><span class="ob-step-lbl">Step 2 of 3</span>
+              </div>
+            </div>
+            <!-- STEP 3: Interests + Stressors -->
+            <div id="ob-s3" style="display: none">
+              <div class="ob-bar">
+                <div class="ob-dot done"></div>
+                <div class="ob-dot done"></div>
+                <div class="ob-dot active"></div>
+              </div>
+              <div class="ob-icon">🎯</div>
+              <h2 class="ob-title">One last thing</h2>
+              <p class="ob-sub">
+                This helps MindLog personalise your experience from day one — no
+                generic advice.
+              </p>
+
+              <div class="fld-group">
+                <label class="fld-label"
+                  >Your Interests
+                  <span
+                    style="
+                      color: var(--text-l);
+                      font-weight: 400;
+                      text-transform: none;
+                      letter-spacing: 0;
+                    "
+                    >(pick all that apply)</span
+                  ></label
+                >
+                <div class="ob-multi-grid" id="ob-interests-grid">
+                  <button
+                    class="ob-multi-chip"
+                    data-val="music"
+                    onclick="toggleChip(this)"
+                  >
+                    🎵 Music
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="gaming"
+                    onclick="toggleChip(this)"
+                  >
+                    🎮 Gaming
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="art"
+                    onclick="toggleChip(this)"
+                  >
+                    🎨 Art & Drawing
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="fitness"
+                    onclick="toggleChip(this)"
+                  >
+                    🏃 Fitness & Sports
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="reading"
+                    onclick="toggleChip(this)"
+                  >
+                    📚 Reading
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="coding"
+                    onclick="toggleChip(this)"
+                  >
+                    💻 Coding & Tech
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="cooking"
+                    onclick="toggleChip(this)"
+                  >
+                    🍳 Cooking & Food
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="travel"
+                    onclick="toggleChip(this)"
+                  >
+                    ✈️ Travel & Explore
+                  </button>
+                </div>
+              </div>
+
+              <div class="fld-group" style="margin-top: 16px">
+                <label class="fld-label"
+                  >What's stressing you most right now?
+                  <span
+                    style="
+                      color: var(--text-l);
+                      font-weight: 400;
+                      text-transform: none;
+                      letter-spacing: 0;
+                    "
+                    >(pick all that apply)</span
+                  ></label
+                >
+                <div class="ob-multi-grid" id="ob-stressors-grid">
+                  <button
+                    class="ob-multi-chip"
+                    data-val="exams"
+                    onclick="toggleChip(this)"
+                  >
+                    📝 Exams & Tests
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="placements"
+                    onclick="toggleChip(this)"
+                  >
+                    💼 Placements
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="assignments"
+                    onclick="toggleChip(this)"
+                  >
+                    📋 Assignments
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="family"
+                    onclick="toggleChip(this)"
+                  >
+                    🏠 Family Pressure
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="social"
+                    onclick="toggleChip(this)"
+                  >
+                    👥 Social Life
+                  </button>
+                  <button
+                    class="ob-multi-chip"
+                    data-val="finance"
+                    onclick="toggleChip(this)"
+                  >
+                    💸 Financial Stress
+                  </button>
+                </div>
+              </div>
+
+              <button
+                onclick="obFinish()"
+                class="btn-primary"
+                style="
+                  width: 95%;
+                  padding: 14px;
+                  border-radius: 99px;
+                  margin-top: 20px;
+                  text-align: center;
+                  justify-content: center;
+                  font-size: 20px;
+                "
+              >
+                Enter MindLog 🌱
+              </button>
+              <div class="ob-footer">
+                <span class="ob-back" onclick="obBackToStep2()">← Back</span>
+                <span class="ob-step-lbl">Step 3 of 3</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- APP NAVBAR (Desktop) -->
+    <nav class="navbar" id="app-navbar" style="display: none">
+      <div class="navbar-inner">
+        <div class="nav-logo">
+          <div class="nav-logo-dot">🧠</div>
+          MindLog
+        </div>
+        <div class="nav-links">
+          <a
+            class="nav-link active"
+            href="#"
+            onclick="
+              navTo('home');
+              return false;
+            "
+            >Home</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            onclick="
+              navTo('journal');
+              return false;
+            "
+            >Journal</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            onclick="
+              navTo('tracker');
+              return false;
+            "
+            >Tracker</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            onclick="
+              navTo('experts');
+              return false;
+            "
+            >Experts</a
+          >
+          <a
+            class="nav-link"
+            href="#"
+            onclick="
+              navTo('account');
+              return false;
+            "
+            >Account</a
+          >
+          <button class="nav-key-btn" onclick="openApiModal()">
+            🔑 API Key
+          </button>
+        </div>
+      </div>
+    </nav>
+    <!-- Bottom Nav (Mobile) -->
+    <nav class="bot-nav" id="bot-nav">
+      <div class="bot-items">
+        <div class="bot-item on" id="bn-home" onclick="navTo('home')">
+          <span class="bot-item-icon">🏠</span
+          ><span class="bot-item-label">Home</span>
+        </div>
+        <div class="bot-item" id="bn-journal" onclick="navTo('journal')">
+          <span class="bot-item-icon">✍️</span
+          ><span class="bot-item-label">Journal</span>
+        </div>
+        <div class="bot-item" id="bn-tracker" onclick="navTo('tracker')">
+          <span class="bot-item-icon">📊</span
+          ><span class="bot-item-label">Tracker</span>
+        </div>
+        <div class="bot-item" id="bn-experts" onclick="navTo('experts')">
+          <span class="bot-item-icon">🎓</span
+          ><span class="bot-item-label">Experts</span>
+        </div>
+        <div class="bot-item" id="bn-account" onclick="navTo('account')">
+          <span class="bot-item-icon">👤</span
+          ><span class="bot-item-label">Account</span>
+        </div>
+      </div>
+    </nav>
+    <button class="fab-btn" id="fab" onclick="navTo('journal')">✍️</button>
+
+    <main class="app-main">
+      <div class="wrap">
+        <section class="screen" id="screen-home">
+          <div id="home-content" style="padding: 8px 0 10px">
+            <div
+              style="text-align: center; padding: 48px; color: var(--text-l)"
+            >
+              Loading...
+            </div>
+          </div>
+        </section>
+
+        <section class="screen" id="screen-journal">
+          <div class="j-wrap">
+            <!-- ══ LEFT: CANVAS ═══════════════════════════ -->
+            <div class="j-canvas-col">
+              <!-- Context bar -->
+              <div
+                id="j-context-bar"
+                class="j-context-bar"
+                style="display: none"
+              >
+                <div
+                  id="j-ctx-streak-wrap"
+                  class="j-ctx-chip"
+                  style="display: none"
+                >
+                  <span>🔥</span>
+                  <span id="j-ctx-streak"></span>
+                  <span class="j-ctx-lbl">day streak</span>
+                </div>
+                <div
+                  id="j-ctx-last-wrap"
+                  class="j-ctx-chip"
+                  style="display: none"
+                >
+                  <span class="j-ctx-lbl">Last felt</span>
+                  <span id="j-ctx-emotion" class="j-ctx-emotion"></span>
+                  <span class="j-ctx-lbl">— how are you today?</span>
+                </div>
+              </div>
+
+              <!-- Mode toggle row -->
+              <div class="j-mode-row">
+                <div class="j-mode-toggle">
+                  <button
+                    class="j-mode-btn active"
+                    id="mode-free"
+                    onclick="setJournalMode('free')"
+                  >
+                    ✍️ Free Write
+                  </button>
+                  <button
+                    class="j-mode-btn"
+                    id="mode-guided"
+                    onclick="setJournalMode('guided')"
+                  >
+                    📋 Guided
+                  </button>
+                </div>
+                <button
+                  class="j-voice-btn"
+                  id="j-voice-btn"
+                  onclick="toggleVoice()"
+                  title="Voice input"
+                >
+                  🎙️ <span class="j-voice-btn-lbl">Voice</span>
+                </button>
+              </div>
+
+              <!-- API notice -->
+              <div
+                class="api-notice"
+                id="api-notice"
+                onclick="openApiModal()"
+                style="display: none"
+              >
+                🔑 <span>API key required — tap to configure</span>
+              </div>
+
+              <!-- Error -->
+              <div class="err-notice" id="err-notice"></div>
+
+              <!-- Voice status strip -->
+              <div
+                class="j-voice-status"
+                id="j-voice-status"
+                style="display: none"
+              >
+                <span class="j-voice-dot"></span>
+                <span id="j-voice-label">Listening</span>
+                <button onclick="stopVoice()">Stop</button>
+              </div>
+
+              <!-- ── FREE WRITE ──────────────────────────── -->
+              <div id="j-free-mode">
+                <div class="j-canvas-card">
+                  <!-- Prompt lives inside the canvas -->
+                  <div class="j-canvas-prompt" id="j-prompt-block">
+                    <span class="j-canvas-prompt-kicker">✦ Today's Prompt</span>
+                    <p class="j-canvas-prompt-text" id="j-prompt-text"></p>
+                  </div>
+
+                  <div class="j-canvas-divider"></div>
+
+                  <textarea
+                    class="j-textarea"
+                    id="j-text"
+                    placeholder="Start writing — English, Hindi, Hinglish, whatever feels natural.&#10;&#10;Some things to reflect on:&#10;· How did today feel overall?&#10;· What's been on your mind lately?&#10;· What went well, even something small?"
+                    oninput="onJInput(this)"
+                  ></textarea>
+
+                  <div class="j-canvas-foot">
+                    <span class="j-wc" id="j-wc">0 words</span>
+                    <span
+                      class="j-goal-progress"
+                      id="j-goal-progress"
+                      style="display: none"
+                    ></span>
+                    <span class="j-draft-ok" id="j-draft-ok"
+                      >Draft saved ✓</span
+                    >
+                  </div>
+                </div>
+
+                <!-- Prompt chips -->
+                <div class="j-chips-row" id="j-chips-row">
+                  <button
+                    class="chip"
+                    onclick="
+                      addChip('What was the most stressful part of today?')
+                    "
+                  >
+                    😰 Stress
+                  </button>
+                  <button
+                    class="chip"
+                    onclick="
+                      addChip('Were there any exams or deadlines today?')
+                    "
+                  >
+                    📚 Academics
+                  </button>
+                  <button
+                    class="chip"
+                    onclick="
+                      addChip(
+                        'Did you feel connected to friends or family today?',
+                      )
+                    "
+                  >
+                    🏠 Connections
+                  </button>
+                  <button
+                    class="chip"
+                    onclick="addChip('How was your energy today?')"
+                  >
+                    ⚡ Energy
+                  </button>
+                  <button
+                    class="chip"
+                    onclick="
+                      addChip('What went well today, even something small?')
+                    "
+                  >
+                    ✨ Positives
+                  </button>
+                </div>
+              </div>
+
+              <!-- ── GUIDED MODE ─────────────────────────── -->
+              <div id="j-guided-mode" style="display: none">
+                <div class="j-guided-sections" id="j-guided-sections">
+                  <!-- Built by JS -->
+                </div>
+                <div class="j-guided-foot">
+                  <span class="j-wc" id="j-guided-wc">0 words total</span>
+                  <span class="j-draft-ok" id="j-guided-draft-ok"
+                    >Draft saved ✓</span
+                  >
+                </div>
+              </div>
+
+              <!-- Analyse button — centred pill -->
+              <div class="j-analyse-wrap">
+                <button
+                  class="btn-primary j-analyse-btn"
+                  id="analyse-btn"
+                  onclick="runAnalysis()"
+                  disabled
+                >
+                  Analyse My Day ✦
+                </button>
+                <p class="j-analyse-sub">
+                  MindLog is a self-reflection tool — not professional mental
+                  health support. Tele-MANAS: <strong>1-800-891-4416</strong>
+                </p>
+              </div>
+            </div>
+
+            <!-- ══ RIGHT: STICKY SIDEBAR ══════════════════ -->
+            <div class="j-sidebar-col">
+              <!-- Writing stats card -->
+              <div
+                class="card j-sidebar-card"
+                id="j-pre-analyse"
+                style="display: none"
+              >
+                <p class="j-sidebar-title">Writing Stats</p>
+                <div class="j-stats-grid">
+                  <div class="j-stat-cell">
+                    <span class="j-stat-val" id="j-stat-words">0</span>
+                    <span class="j-stat-label">words</span>
+                  </div>
+                  <div class="j-stat-cell">
+                    <span class="j-stat-val" id="j-stat-time">0</span>
+                    <span class="j-stat-label">mins writing</span>
+                  </div>
+                  <div class="j-stat-cell">
+                    <span class="j-stat-val" id="j-stat-entry-num">1</span>
+                    <span class="j-stat-label">entry today</span>
+                  </div>
+                </div>
+                <div class="j-preview-block">
+                  <p class="j-preview-label">Preview</p>
+                  <p class="j-preview-text" id="j-preview-text"></p>
+                </div>
+              </div>
+
+              <!-- Goal card -->
+              <div class="card j-sidebar-card">
+                <p class="j-sidebar-title">Writing Goal</p>
+                <p class="j-sidebar-sub">Set a word count target</p>
+                <div class="j-goal-opts-row">
+                  <button class="j-goal-opt" onclick="setGoal(50)">
+                    50<span>Quick</span>
+                  </button>
+                  <button class="j-goal-opt" onclick="setGoal(100)">
+                    100<span>Habit</span>
+                  </button>
+                  <button class="j-goal-opt" onclick="setGoal(200)">
+                    200<span>Deep</span>
+                  </button>
+                  <button class="j-goal-opt" onclick="setGoal(0)">
+                    —<span>Free</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Tips card -->
+              <div class="card j-sidebar-card j-tips-card">
+                <p class="j-sidebar-title">💡 Writing Tips</p>
+                <ul class="j-tips-list">
+                  <li>Write without editing — let thoughts flow</li>
+                  <li>Even 50 words gives meaningful analysis</li>
+                  <li>Hinglish and Hindi work perfectly</li>
+                  <li>Be specific — names and events help AI understand</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section class="screen" id="screen-loading">
+          <div class="loading-wrap">
+            <div class="orb-wrap">
+              <div class="orb-body"></div>
+              <div class="orb-ring"></div>
+              <div class="orb-ring"></div>
+              <div class="orb-ring"></div>
+              <div class="orb-icon">🧠</div>
+            </div>
+            <div>
+              <p class="loading-title" id="loading-msg">
+                Reading your entry...
+              </p>
+              <p class="loading-sub">
+                Your analysis will be ready in a moment.
+              </p>
+            </div>
+            <div class="loading-dots">
+              <div class="loading-dot"></div>
+              <div class="loading-dot"></div>
+              <div class="loading-dot"></div>
+              <div class="loading-dot"></div>
+            </div>
+          </div>
+        </section>
+        <section class="screen" id="screen-insights">
+          <div class="ins-wrap">
+            <!-- ── 1. EMOTION HERO ─────────────────────── -->
+            <div
+              class="ins-emotion-hero anim-fade-up"
+              id="ins-emotion-hero"
+              style="display: none"
+            >
+              <div class="ins-hero-emoji" id="ins-hero-emoji"></div>
+              <div class="ins-hero-body">
+                <p class="ins-hero-label">You're feeling</p>
+                <p class="ins-hero-emotion" id="ins-hero-emotion-name"></p>
+                <p class="ins-hero-reason" id="ins-hero-reason"></p>
+              </div>
+            </div>
+
+            <!-- ── 2. AI SUMMARY BANNER ─────────────────── -->
+            <div
+              class="ins-summary-card anim-fade-up"
+              style="animation-delay: 0.08s"
+            >
+              <p class="ins-summary-label">✦ AI Analysis Complete</p>
+              <p class="ins-summary-body" id="empathy-body"></p>
+              <p
+                class="ins-positive-pill"
+                id="positive-pill"
+                style="display: none"
+              ></p>
+            </div>
+
+            <!-- ── 3. VITALS — 2 column ─────────────────── -->
+            <div class="ins-vitals anim-fade-up" style="animation-delay: 0.15s">
+              <!-- Left: Mood Score (replaces duplicate emotion) -->
+              <div class="card ins-vital-main">
+                <p class="ins-vital-lbl">Mood Score</p>
+                <p class="ins-vital-sublbl">Detected Mood</p>
+                <div class="ins-mood-score-wrap">
+                  <div class="ins-mood-score" id="ins-mood-score">—</div>
+                  <div class="ins-mood-max">/10</div>
+                </div>
+                <p class="ins-em-name" id="ins-mood-lbl">—</p>
+                <p class="ins-em-reason" id="ins-mood-reason"></p>
+              </div>
+
+              <!-- Right: Stress + Energy stacked -->
+              <div class="ins-vital-stack">
+                <!-- Stress -->
+                <div class="card ins-vital-mini">
+                  <div class="ins-mini-left">
+                    <p class="ins-vital-lbl">Stress Level</p>
+                    <p class="ins-mini-val" id="ins-stress-lbl">—</p>
+                    <p class="ins-mini-sub" id="ins-stress-sub"></p>
+                  </div>
+                  <div class="ins-mini-ring-wrap">
+                    <svg
+                      width="64"
+                      height="64"
+                      viewBox="0 0 64 64"
+                      style="transform: rotate(-90deg)"
+                    >
+                      <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="var(--muted)"
+                        stroke-width="6"
+                      />
+                      <circle
+                        id="ins-stress-ring"
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="#E07A5F"
+                        stroke-width="6"
+                        stroke-linecap="round"
+                        stroke-dasharray="0 163"
+                        style="
+                          transition: stroke-dasharray 1.3s
+                            cubic-bezier(0.4, 0, 0.2, 1) 0.4s;
+                        "
+                      />
+                    </svg>
+                    <div class="ins-mini-center">
+                      <span
+                        id="ins-stress-num"
+                        style="
+                          font-family: var(--font-h);
+                          font-size: 1.1rem;
+                          font-weight: 800;
+                          color: var(--text);
+                        "
+                        >—</span
+                      >
+                      <span style="font-size: 0.5rem; color: var(--text-l)"
+                        >/10</span
+                      >
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Energy -->
+                <div class="card ins-vital-mini">
+                  <div class="ins-mini-left">
+                    <p class="ins-vital-lbl">Energy Level</p>
+                    <p class="ins-mini-val" id="ins-energy-lbl">—</p>
+                    <p class="ins-mini-sub" id="ins-energy-sub"></p>
+                  </div>
+                  <div class="ins-mini-ring-wrap">
+                    <svg
+                      width="64"
+                      height="64"
+                      viewBox="0 0 64 64"
+                      style="transform: rotate(-90deg)"
+                    >
+                      <circle
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="var(--muted)"
+                        stroke-width="6"
+                      />
+                      <circle
+                        id="ins-energy-ring"
+                        cx="32"
+                        cy="32"
+                        r="26"
+                        fill="none"
+                        stroke="#F2CC8F"
+                        stroke-width="6"
+                        stroke-linecap="round"
+                        stroke-dasharray="0 163"
+                        style="
+                          transition: stroke-dasharray 1.3s
+                            cubic-bezier(0.4, 0, 0.2, 1) 0.5s;
+                        "
+                      />
+                    </svg>
+                    <div class="ins-mini-center">
+                      <span
+                        id="ins-energy-num"
+                        style="
+                          font-family: var(--font-h);
+                          font-size: 1rem;
+                          font-weight: 800;
+                          color: var(--text);
+                        "
+                        >—</span
+                      >
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── 4. ACTION BANNER ──────────────────────── -->
+            <div
+              class="ins-action-banner anim-fade-up"
+              style="animation-delay: 0.22s"
+            >
+              <div class="ins-action-icon">⚡</div>
+              <div class="ins-action-body">
+                <p class="ins-action-kicker">Recommended Action for Today</p>
+                <p class="ins-action-title" id="action-title">—</p>
+                <p class="ins-action-desc" id="action-body">—</p>
+              </div>
+            </div>
+
+            <!-- ── 5. NEEDS STACK ────────────────────────── -->
+            <div
+              class="needs-stack anim-fade-up"
+              id="needs-stack"
+              style="animation-delay: 0.28s"
+            ></div>
+
+            <!-- ── 6. PERSONALISED INSIGHT (quote style) ── -->
+            <div
+              class="ins-quote-card anim-fade-up"
+              style="animation-delay: 0.34s"
+            >
+              <div class="ins-quote-bar"></div>
+              <div class="ins-quote-body">
+                <p class="ins-quote-from">✦ Reflection on Today</p>
+                <p class="ins-quote-text" id="insight-body"></p>
+              </div>
+            </div>
+
+            <!-- ── 7. SAFETY NOTICE ──────────────────────── -->
+            <div class="ins-safety anim-fade-up" style="animation-delay: 0.38s">
+              ⚠️ MindLog is a wellness reflection tool — not a substitute for
+              professional mental health support. Tele-MANAS:
+              <strong style="color: var(--primary)">1-800-891-4416</strong>
+              — free and confidential.
+            </div>
+
+            <!-- ── 8. CONTEXTUAL RECOMMENDATION ──────────── -->
+            <div id="contextual-reco-container" style="display: none"></div>
+
+            <!-- ── 9. ACTION BUTTONS ─────────────────────── -->
+            <div
+              class="ins-actions anim-fade-up"
+              style="animation-delay: 0.42s"
+            >
+              <button
+                class="ins-act-btn ins-act-secondary"
+                onclick="
+                  navTo('journal');
+                  resetJournal();
+                "
+              >
+                ✍️ New Entry
+              </button>
+              <button
+                class="ins-act-btn ins-act-primary"
+                onclick="navTo('tracker')"
+              >
+                📊 Tracker
+              </button>
+              <button
+                class="ins-act-btn ins-act-secondary"
+                onclick="shareAnalysis()"
+              >
+                ↗ Share
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="screen" id="screen-tracker">
+          <div class="anim-up" style="margin-bottom: 24px">
+            <div class="section-label">✦ Analytics</div>
+            <h1 class="page-title" style="font-size: 1.9rem">
+              Your Emotional Patterns
+            </h1>
+            <p class="page-sub" id="tracker-sub">
+              Longitudinal insights across your wellness journey.
+            </p>
+          </div>
+
+          <div class="tab-row anim-up" style="animation-delay: 0.05s">
+            <button class="tab-btn active" onclick="setTab('weekly', this)">
+              Weekly
+            </button>
+            <button class="tab-btn" onclick="setTab('monthly', this)">
+              Monthly
+            </button>
+            <button class="tab-btn" onclick="setTab('yearly', this)">
+              Yearly
+            </button>
+          </div>
+
+          <div class="tracker-stats anim-up" style="animation-delay: 0.1s">
+            <div class="card ts-card">
+              <div class="ts-val" id="ts-stress">—</div>
+              <div class="ts-label">Avg Stress</div>
+              <div class="ts-sub">lower = better</div>
+            </div>
+            <div class="card ts-card">
+              <div class="ts-val" id="ts-mood">—</div>
+              <div class="ts-label">Avg Mood</div>
+              <div class="ts-sub">out of 10</div>
+            </div>
+            <div class="card ts-card">
+              <div class="ts-val" id="ts-streak">0</div>
+              <div class="ts-label">Streak 🔥</div>
+              <div class="ts-sub">days in a row</div>
+            </div>
+            <div class="card ts-card">
+              <div class="ts-val" id="ts-count">0</div>
+              <div class="ts-label">Entries</div>
+              <div class="ts-sub" id="ts-count-sub">this period</div>
+            </div>
+          </div>
+
+          <div
+            class="best-day-strip anim-up"
+            style="animation-delay: 0.15s"
+            id="best-day-strip"
+          >
+            <div class="bd-icon">🌟</div>
+            <div>
+              <p class="bd-label">Best Day This Period</p>
+              <p class="bd-date" id="bd-date">—</p>
+            </div>
+            <div class="bd-score">
+              <div class="bd-num" id="bd-num">—</div>
+              <div class="bd-max">/10 mood</div>
+            </div>
+          </div>
+
+          <div
+            class="card card-lg chart-card anim-up"
+            style="animation-delay: 0.2s"
+          >
+            <p class="chart-card-title">Mood Trend</p>
+            <p class="chart-card-sub">Hover over data points for details.</p>
+            <svg
+              id="line-svg"
+              width="100%"
+              height="200"
+              viewBox="0 0 900 200"
+              style="overflow: visible; display: block"
+            ></svg>
+          </div>
+
+          <div
+            class="card card-lg chart-card anim-up"
+            style="animation-delay: 0.25s"
+          >
+            <div class="hm-card-split">
+              <div class="hm-card-left">
+                <p class="chart-card-title">Mood Calendar</p>
+                <p class="chart-card-sub">
+                  12 weeks of entries — hover any cell.
+                </p>
+                <div id="heatmap"></div>
+              </div>
+              <div class="hm-card-right">
+                <div class="hm-side-section">
+                  <p class="chart-card-title" style="margin-bottom: 6px">
+                    Streak History
+                  </p>
+                  <p class="chart-card-sub">Weekly consistency</p>
+                  <div id="streak-history"></div>
+                </div>
+                <div class="hm-side-section" style="margin-top: 20px">
+                  <p class="chart-card-title" style="margin-bottom: 6px">
+                    Emotion Breakdown
+                  </p>
+                  <p class="chart-card-sub">This period</p>
+                  <div id="emotion-breakdown"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div
+            class="card card-lg chart-card anim-up"
+            style="animation-delay: 0.3s"
+          >
+            <p class="chart-card-title">Emotion Frequency</p>
+            <p class="chart-card-sub">
+              Which emotions appeared most this period?
+            </p>
+            <div class="donut-wrap">
+              <div class="donut-svg-wrap">
+                <svg
+                  id="donut-svg"
+                  width="160"
+                  height="160"
+                  viewBox="0 0 160 160"
+                  style="transform: rotate(-90deg)"
+                >
+                  <circle
+                    cx="80"
+                    cy="80"
+                    r="60"
+                    fill="none"
+                    stroke="#F0EDE8"
+                    stroke-width="20"
+                  />
+                </svg>
+                <div class="donut-center-emoji" id="donut-center-emoji"></div>
+              </div>
+              <div class="donut-legend" id="donut-legend"></div>
+            </div>
+          </div>
+
+          <div
+            class="card card-lg tracker-insight anim-up"
+            style="animation-delay: 0.35s"
+          >
+            <p class="chart-card-title">AI Pattern Insight</p>
+            <p
+              class="insight-body"
+              id="tracker-insight"
+              style="font-size: 0.9rem; color: var(--text-m); line-height: 1.8"
+            >
+              Continue logging entries to unlock personalised pattern insights.
+              🌱
+            </p>
+          </div>
+
+          <div id="tracker-empty" style="display: none">
+            <div class="card empty-state">
+              <p class="empty-icon">📊</p>
+              <p class="empty-title">No entries yet</p>
+              <p class="empty-body">
+                Begin journaling to populate your analytics dashboard with real
+                emotional data and trend insights.
+              </p>
+              <button class="btn-primary" onclick="showScreen('journal')">
+                Start Your First Entry →
+              </button>
+            </div>
+          </div>
+        </section>
+        <section class="screen" id="screen-experts">
+          <div class="anim-up" style="margin-bottom: 24px">
+            <div class="section-label">✦ Curated Resources</div>
+            <h1 class="page-title">Verified Mental Health Experts</h1>
+            <p class="page-sub">
+              17 evidence-informed YouTube channels, curated by specialisation
+              and mapped to your personal wellness needs.
+            </p>
+          </div>
+
+          <div
+            class="experts-stats card anim-up"
+            style="animation-delay: 0.05s"
+          >
+            <div class="ex-stat">
+              <div class="ex-stat-val">17</div>
+              <div class="ex-stat-label">Verified Experts</div>
+            </div>
+            <div class="ex-stat">
+              <div class="ex-stat-val">8</div>
+              <div class="ex-stat-label">Licensed Therapists</div>
+            </div>
+            <div class="ex-stat">
+              <div class="ex-stat-val">55M+</div>
+              <div class="ex-stat-label">Combined Subscribers</div>
+            </div>
+            <div class="ex-stat">
+              <div class="ex-stat-val">Free</div>
+              <div class="ex-stat-label">All Content</div>
+            </div>
+          </div>
+
+          <div class="filter-row anim-up" style="animation-delay: 0.1s">
+            <button
+              class="filter-btn active"
+              onclick="filterExperts('all', this)"
+            >
+              All (20)
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterExperts('therapists', this)"
+            >
+              🎓 Therapists
+            </button>
+            <button class="filter-btn" onclick="filterExperts('science', this)">
+              🔬 Science
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterExperts('animated', this)"
+            >
+              🎬 Animated
+            </button>
+            <button class="filter-btn" onclick="filterExperts('niche', this)">
+              ⚡ Niche
+            </button>
+            <button
+              class="filter-btn"
+              onclick="filterExperts('psychiatry', this)"
+            >
+              🧠 Psychiatry
+            </button>
+          </div>
+
+          <div
+            id="experts-container"
+            class="anim-up"
+            style="animation-delay: 0.15s"
+          ></div>
+        </section>
+
+        <!-- ─── ACCOUNT ─────────────────────────────────────── -->
+        <section class="screen" id="screen-account">
+          <div style="max-width: 660px; margin: 0 auto; padding: 26px 0">
+            <div class="anim-fade-up" style="margin-bottom: 19px">
+              <p
+                style="
+                  font-size: 0.7rem;
+                  font-weight: 700;
+                  color: var(--primary);
+                  text-transform: uppercase;
+                  letter-spacing: 0.13em;
+                  margin-bottom: 6px;
+                "
+              >
+                ✦ Settings
+              </p>
+              <h1
+                style="
+                  font-family: var(--font-h);
+                  font-size: 1.78rem;
+                  font-weight: 600;
+                  color: var(--text);
+                  margin-bottom: 0;
+                "
+              >
+                Account
+              </h1>
+            </div>
+            <div
+              class="card card-lg acct-section anim-fade-up"
+              style="animation-delay: 0.06s"
+            >
+              <p class="acct-section-title">Profile</p>
+              <div class="profile-top">
+                <div class="profile-av">👤</div>
+                <div>
+                  <p class="profile-name" id="acct-name">—</p>
+                  <p class="profile-detail" id="acct-detail">—</p>
+                </div>
+              </div>
+              <div class="fld-group">
+                <label class="fld-label">First Name</label
+                ><input class="fld" id="acct-f-name" type="text" />
+              </div>
+              <div class="form-row">
+                <div class="fld-group">
+                  <label class="fld-label">Year</label
+                  ><select class="fld" id="acct-f-year">
+                    <option>1st Year</option>
+                    <option>2nd Year</option>
+                    <option>3rd Year</option>
+                    <option>4th Year</option>
+                  </select>
+                </div>
+                <div class="fld-group">
+                  <label class="fld-label">Branch</label
+                  ><input class="fld" id="acct-f-branch" type="text" />
+                </div>
+              </div>
+              <div class="form-row">
+                <div class="fld-group">
+                  <label class="fld-label">Living</label
+                  ><select class="fld" id="acct-f-living">
+                    <option value="hostel">Hostel</option>
+                    <option value="day">Day Scholar</option>
+                    <option value="pg">PG / Rented</option>
+                  </select>
+                </div>
+                <div class="fld-group">
+                  <label class="fld-label">City</label
+                  ><input class="fld" id="acct-f-city" type="text" />
+                </div>
+              </div>
+              <div style="margin-top: 16px; margin-bottom: 14px">
+                <p
+                  style="
+                    font-size: 0.73rem;
+                    font-weight: 700;
+                    color: var(--text-m);
+                    text-transform: uppercase;
+                    letter-spacing: 0.07em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Interests
+                </p>
+                <div id="acct-interests"></div>
+              </div>
+              <div style="margin-bottom: 16px">
+                <p
+                  style="
+                    font-size: 0.73rem;
+                    font-weight: 700;
+                    color: var(--text-m);
+                    text-transform: uppercase;
+                    letter-spacing: 0.07em;
+                    margin-bottom: 6px;
+                  "
+                >
+                  Current Stressors
+                </p>
+                <div id="acct-stressors"></div>
+              </div>
+              <p
+                style="
+                  font-size: 0.75rem;
+                  color: var(--text-l);
+                  margin-bottom: 12px;
+                "
+              >
+                To update interests or stressors, clear your data and go through
+                setup again.
+              </p>
+              <button
+                onclick="saveProfile()"
+                class="btn-primary"
+                style="
+                  padding: 10px 22px;
+                  font-size: 0.86rem;
+                  border-radius: 99px;
+                "
+              >
+                Save Changes
+              </button>
+            </div>
+            <!-- Theme Picker -->
+            <div
+              class="card card-lg acct-section anim-fade-up"
+              style="animation-delay: 0.06s"
+            >
+              <p class="acct-section-title">App Theme</p>
+              <p
+                style="
+                  font-size: 0.81rem;
+                  color: var(--text-m);
+                  margin-bottom: 14px;
+                "
+              >
+                Choose a theme that feels right for you. Changes apply
+                instantly.
+              </p>
+              <div id="theme-picker-container"></div>
+            </div>
+
+            <div
+              class="card card-lg acct-section anim-fade-up"
+              style="animation-delay: 0.1s"
+            >
+              <p class="acct-section-title">API Key</p>
+              <p
+                style="
+                  font-size: 0.8rem;
+                  color: var(--text-m);
+                  margin-bottom: 9px;
+                "
+              >
+                Stored only in your browser session — clears when you close the
+                tab.
+              </p>
+              <div
+                style="
+                  font-family: monospace;
+                  font-size: 0.8rem;
+                  color: var(--text-m);
+                  background: var(--bg);
+                  padding: 8px 12px;
+                  border-radius: var(--r-sm);
+                  border: 1px solid var(--muted);
+                  margin-bottom: 9px;
+                "
+                id="acct-api-masked"
+              >
+                Not configured
+              </div>
+              <button
+                onclick="openApiModal()"
+                style="
+                  padding: 8px 17px;
+                  border-radius: 99px;
+                  border: 1.5px solid var(--muted);
+                  font-size: 0.8rem;
+                  font-weight: 600;
+                  color: var(--text-m);
+                  cursor: pointer;
+                  font-family: var(--font-b);
+                  background: transparent;
+                  transition: var(--transition);
+                  text-align: center;
+                  justify-content: center;
+                "
+              >
+                Update API Key
+              </button>
+            </div>
+            <div
+              class="card card-lg acct-section anim-fade-up"
+              style="animation-delay: 0.14s"
+            >
+              <p class="acct-section-title">Export Your Data</p>
+              <p
+                style="
+                  font-size: 0.8rem;
+                  color: var(--text-m);
+                  margin-bottom: 8px;
+                "
+              >
+                Download all your journal entries and analysis as a JSON file.
+              </p>
+              <p
+                id="acct-backup-status"
+                style="
+                  font-size: 0.76rem;
+                  color: var(--text-m);
+                  margin-bottom: 12px;
+                  padding: 8px 12px;
+                  background: var(--bg);
+                  border-radius: var(--r-sm);
+                  border: 1px solid var(--muted);
+                "
+              >
+                Checking backup status...
+              </p>
+              <button
+                onclick="exportData()"
+                style="
+                  padding: 10px 20px;
+                  border-radius: 99px;
+                  border: 1.5px solid var(--muted);
+                  font-size: 0.86rem;
+                  font-weight: 700;
+                  color: var(--text-m);
+                  cursor: pointer;
+                  font-family: var(--font-b);
+                  background: transparent;
+                  transition: var(--transition);
+                "
+              >
+                📥 Export as JSON
+              </button>
+            </div>
+            <div
+              class="card card-lg anim-fade-up"
+              style="
+                animation-delay: 0.18s;
+                background: var(--primary-xl);
+                border: 1px solid rgba(224, 122, 95, 0.3);
+              "
+            >
+              <p
+                style="
+                  font-weight: 700;
+                  font-size: 0.86rem;
+                  color: var(--primary-d);
+                  margin-bottom: 4px;
+                "
+              >
+                ⚠️ Danger Zone
+              </p>
+              <p
+                style="
+                  font-size: 0.78rem;
+                  color: var(--text-m);
+                  margin-bottom: 11px;
+                "
+              >
+                Permanently delete all your journal entries, profile, and
+                settings. This cannot be undone.
+              </p>
+              <button
+                onclick="clearAllData()"
+                style="
+                  background: transparent;
+                  color: var(--primary-d);
+                  border: 1.5px solid var(--primary-d);
+                  padding: 8px 17px;
+                  border-radius: 99px;
+                  font-size: 0.81rem;
+                  font-weight: 700;
+                  cursor: pointer;
+                  transition: var(--transition);
+                  font-family: var(--font-b);
+                "
+              >
+                Delete Everything
+              </button>
+            </div>
+            <div
+              class="card anim-fade-up"
+              style="animation-delay: 0.22s; text-align: center; padding: 12px"
+            >
+              <p
+                style="
+                  font-size: 0.71rem;
+                  color: var(--text-l);
+                  line-height: 1.7;
+                "
+              >
+                MindLog is a self-reflection wellness tool — not a clinical
+                service.<br />Tele-MANAS:
+                <strong style="color: var(--primary)">1-800-891-4416</strong> · Built for students
+              </p>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+
+    <!-- Scripts — order matters -->
+    <script src="js/theme.js"></script>
+    <script src="js/data.js"></script>
+    <script src="js/storage.js"></script>
+    <script src="js/router.js"></script>
+    <script src="js/onboard.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/journal.js"></script>
+    <script src="js/analysis.js"></script>
+    <script src="js/insights.js"></script>
+    <script src="js/recommendations.js"></script>
+    <script src="js/home.js"></script>
+    <script src="js/tracker.js"></script>
+    <script src="js/experts.js"></script>
+    <script src="js/account.js"></script>
+    <script src="js/init.js"></script>
+  </body>
+</html>

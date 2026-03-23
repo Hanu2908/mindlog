@@ -1,0 +1,243 @@
+/* ═══════════════════════════════════════════════════════════
+   MINDLOG — THEME SYSTEM
+   3 themes: warm (default) | cool | dark
+   Applied via: document.documentElement.setAttribute('data-theme', 'warm'|'cool'|'dark')
+═══════════════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────
+   WARM BLOSSOM (default / :root)
+   Rose blush · Cream · Soft pink glassmorphism
+───────────────────────────────────────────── */
+:root,
+[data-theme="warm"] {
+  /* Accent */
+  --primary:     #D4617E;
+  --primary-d:   #B84867;
+  --primary-l:   rgba(212,97,126,0.13);
+  --primary-xl:  rgba(212,97,126,0.06);
+
+  /* Secondary accent */
+  --accent:      #C084B8;
+  --accent-d:    #9E5FA0;
+  --accent-l:    rgba(192,132,184,0.14);
+
+  /* Warning */
+  --warn:        #E8A87C;
+  --warn-l:      rgba(232,168,124,0.14);
+
+  /* Backgrounds */
+  --bg:          #FEF0F4;
+  --bg-gradient: linear-gradient(135deg,
+    #FFE4ED 0%,
+    #FFF0F5 20%,
+    #FDF4FF 45%,
+    #F5EEFF 70%,
+    #FFE8F4 100%
+  );
+
+  /* Glassmorphism card */
+  --card-bg:     rgba(255,255,255,0.62);
+  --card-border: rgba(255,255,255,0.85);
+  --card-blur:   18px;
+  --card-shadow: 0 4px 24px rgba(180,80,110,0.08), 0 1px 4px rgba(180,80,110,0.05);
+  --card-shadow-m: 0 8px 32px rgba(180,80,110,0.12);
+  --card-shadow-l: 0 16px 48px rgba(180,80,110,0.15);
+
+  /* Text */
+  --text:        #2D1F2B;
+  --text-m:      #7A5C70;
+  --text-l:      #B08FA6;
+
+  /* Borders */
+  --muted:       rgba(212,97,126,0.18);
+
+  /* Surface (non-glass elements) */
+  --surface:     rgba(255,255,255,0.82);
+
+  /* Nav */
+  --nav-bg:      rgba(253,246,248,0.88);
+}
+
+/* ─────────────────────────────────────────────
+   COOL PERIWINKLE
+   Indigo · Lavender · Blue-tinted glass
+───────────────────────────────────────────── */
+[data-theme="cool"] {
+  /* Accent */
+  --primary:     #6C7FD8;
+  --primary-d:   #4D5EC4;
+  --primary-l:   rgba(108,127,216,0.13);
+  --primary-xl:  rgba(108,127,216,0.06);
+
+  /* Secondary accent */
+  --accent:      #70B8C8;
+  --accent-d:    #4A9BAE;
+  --accent-l:    rgba(112,184,200,0.14);
+
+  /* Warning */
+  --warn:        #9B8FD8;
+  --warn-l:      rgba(155,143,216,0.14);
+
+  /* Backgrounds */
+  --bg:          #EEEFFE;
+  --bg-gradient: linear-gradient(135deg,
+    #E4E8FF 0%,
+    #EEF2FF 20%,
+    #E8F4FF 45%,
+    #EDE8FF 70%,
+    #E2EEFF 100%
+  );
+
+  /* Glassmorphism card */
+  --card-bg:     rgba(255,255,255,0.58);
+  --card-border: rgba(255,255,255,0.80);
+  --card-blur:   20px;
+  --card-shadow: 0 4px 24px rgba(80,90,180,0.08), 0 1px 4px rgba(80,90,180,0.05);
+  --card-shadow-m: 0 8px 32px rgba(80,90,180,0.12);
+  --card-shadow-l: 0 16px 48px rgba(80,90,180,0.15);
+
+  /* Text */
+  --text:        #1A1E3A;
+  --text-m:      #5A6080;
+  --text-l:      #9AA0C0;
+
+  /* Borders */
+  --muted:       rgba(108,127,216,0.18);
+
+  /* Surface */
+  --surface:     rgba(255,255,255,0.80);
+
+  /* Nav */
+  --nav-bg:      rgba(244,245,255,0.88);
+}
+
+/* ─────────────────────────────────────────────
+   DARK FOREST
+   Deep green-black · Sage · Luminous glass
+───────────────────────────────────────────── */
+[data-theme="dark"] {
+  /* Accent — bright sage green */
+  --primary:     #52C48A;
+  --primary-d:   #3AAA70;
+  --primary-l:   rgba(82,196,138,0.18);
+  --primary-xl:  rgba(82,196,138,0.09);
+
+  /* Secondary accent */
+  --accent:      #68C4B0;
+  --accent-d:    #48A892;
+  --accent-l:    rgba(104,196,176,0.18);
+
+  /* Warning */
+  --warn:        #C8AE50;
+  --warn-l:      rgba(200,174,80,0.18);
+
+  /* Backgrounds */
+  --bg:          #091210;
+  --bg-gradient: linear-gradient(135deg,
+    #071010 0%,
+    #0C1C14 20%,
+    #081A14 45%,
+    #0C1C10 70%,
+    #071210 100%
+  );
+
+  /* Glassmorphism card — clearly visible */
+  --card-bg:       rgba(255,255,255,0.09);
+  --card-border:   rgba(255,255,255,0.14);
+  --card-blur:     24px;
+  --card-shadow:   0 4px 24px rgba(0,0,0,0.40), 0 1px 6px rgba(0,0,0,0.30);
+  --card-shadow-m: 0 8px 32px rgba(0,0,0,0.45);
+  --card-shadow-l: 0 16px 48px rgba(0,0,0,0.50);
+
+  /* Text — soft off-white */
+  --text:        #DDE8DF;
+  --text-m:      #7A9E84;
+  --text-l:      #3E5C46;
+
+  /* Borders */
+  --muted:       rgba(255,255,255,0.13);
+
+  /* Surface */
+  --surface:     rgba(255,255,255,0.09);
+
+  /* Navbar + bottom nav — glassmorphism dark */
+  --nav-bg:      rgba(9,18,16,0.82);
+  --bot-nav-bg:  rgba(9,18,16,0.88);
+
+  /* Nav link colours */
+  --nav-text:        rgba(220,235,222,0.70);
+  --nav-text-active: #52C48A;
+}
+
+/* ─────────────────────────────────────────────
+   SHARED GLASSMORPHISM CARD STYLE
+   Applied via .card in base.css using vars
+───────────────────────────────────────────── */
+
+/* Theme-aware shadows */
+.card {
+  --shadow:   var(--card-shadow);
+  --shadow-m: var(--card-shadow-m);
+  --shadow-l: var(--card-shadow-l);
+}
+
+/* ─────────────────────────────────────────────
+   THEME PICKER UI (in account page)
+───────────────────────────────────────────── */
+.theme-picker-row {
+  display: flex;
+  gap: 12px;
+  margin-top: 4px;
+}
+.theme-swatch {
+  flex: 1;
+  border-radius: 16px;
+  padding: 16px 12px;
+  cursor: pointer;
+  border: 2.5px solid transparent;
+  transition: all 0.28s cubic-bezier(0.34, 1.56, 0.64, 1);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.theme-swatch:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255,255,255,0.5);
+}
+.theme-swatch.active {
+  border-color: #fff;
+  box-shadow: 0 0 0 3px rgba(255,255,255,0.4), 0 8px 24px rgba(0,0,0,0.15);
+}
+.theme-swatch-dot {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  margin: 0 auto 8px;
+  border: 2px solid rgba(255,255,255,0.5);
+}
+.theme-swatch-name {
+  font-size: .75rem;
+  font-weight: 700;
+  color: rgba(255,255,255,0.9);
+}
+.theme-swatch-tag {
+  font-size: .62rem;
+  color: rgba(255,255,255,0.65);
+  margin-top: 2px;
+}
+.theme-swatch-check {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  font-size: .75rem;
+  opacity: 0;
+  transition: opacity 0.2s;
+}
+.theme-swatch.active .theme-swatch-check { opacity: 1; }
+
+/* Warm swatch */
+.ts-warm  { background: linear-gradient(135deg, #E8819A, #C884B8); }
+/* Cool swatch */
+.ts-cool  { background: linear-gradient(135deg, #6C7FD8, #70B8C8); }
+/* Dark swatch */
+.ts-dark  { background: linear-gradient(135deg, #1A3020, #2D4A38); border: 2px solid rgba(93,191,138,0.4); }
