@@ -1,6 +1,6 @@
 /* ═══ ONBOARDING ═══ */
 .ob-bg {
-  background: linear-gradient(135deg, #fdfbf7, #f4e8e1);
+  background: var(--bg-gradient); /* Replaced the hardcoded linear-gradient */
   min-height: 100vh;
 }
 .ob-wrap {
