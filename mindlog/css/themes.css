@@ -140,6 +140,26 @@
     #0C1C10 70%,
     #071210 100%
   );
+   /* ── Dark Forest — Onboarding specific overrides ── */
+[data-theme="dark"] .ob-bg {
+  background: var(--bg-gradient) !important;
+}
+
+[data-theme="dark"] .ob-card {
+  background: rgba(255, 255, 255, 0.08) !important;
+  backdrop-filter: blur(24px) !important;
+  -webkit-backdrop-filter: blur(24px) !important;
+  border: 1px solid rgba(255, 255, 255, 0.12) !important;
+  box-shadow: 0 16px 48px rgba(0, 0, 0, 0.5) !important;
+}
+
+[data-theme="dark"] .ob-title {
+  color: var(--text) !important;
+}
+
+[data-theme="dark"] .ob-sub {
+  color: var(--text-m) !important;
+}
 
   /* Glassmorphism card — clearly visible */
   --card-bg:       rgba(255,255,255,0.09);
