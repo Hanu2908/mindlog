@@ -164,22 +164,25 @@ async function callGemini(journal, mood, key) {
     .filter(Boolean)
     .join(" ");
 
-  const fullPrompt = `You are a mental wellness AI for engineering college students.
+ // In analysis.js
+const fullPrompt = `You are a mental wellness AI for engineering college students.
 
 STUDENT PROFILE: ${_context || "Engineering college student."}
 Use this profile to personalise your analysis — reference their specific stressors and interests when recommending actions and needs.
 
-Analyse the journal entry and return ONLY a raw JSON object — no markdown, no code fences, no explanation.
+Analyse the journal entry and return ONLY a raw JSON object — no markdown, no code fences, no explanation. Do NOT return the same generic result regardless of content.
 
-ANALYSIS GUIDELINES:
-- Read the full entry carefully — students often feel multiple emotions at once
-- stress_level: judge from the actual content, not assumptions. A busy productive day can still be low stress. A quiet day can be high stress if the student is anxious inside
-- dominant_emotion: pick what is MOST present in the tone and words, not what you expect from the situation
-- mood_rating: infer from the overall positivity and energy of the entry (1=very negative, 10=very positive)
-- summary: MUST reference specific things the student wrote — names, events, feelings they mentioned
-- action_desc: tailor to their profile — if they like music suggest music, if placements stress them address that
-- positive_signal: find something genuine, even in a very hard entry — effort, awareness, honesty counts
-- needs: pick 2-3 that genuinely match what you read, in order of importance
+ANALYSIS GUIDELINES & CRITICAL RULES:
+- Read the full entry carefully — students often feel multiple emotions at once.
+- A productive/happy entry: stress_level MUST be 1-3.
+- A lonely/sad entry: stress_level MUST be 4-6.
+- A stressed/overwhelmed entry: stress_level MUST be 7-10.
+- dominant_emotion: pick what is MOST present in the tone and words, not what you expect from the situation.
+- mood_rating: infer from the overall positivity and energy of the entry (1=very negative, 10=very positive).
+- summary & action_desc: MUST reference specific details from what the student wrote — names, events, feelings they mentioned. Tailor action_desc to their profile.
+- positive_signal: find something genuine, even in a very hard entry — effort, awareness, honesty counts.
+- needs: pick 2-3 that genuinely match what you read, in order of importance.
+
 
 Return ONLY this exact JSON — no text before or after, no markdown:
 {
