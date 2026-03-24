@@ -1,0 +1,16 @@
+{
+  "name": "mindlog",
+  "version": "1.0.0",
+  "description": "AI Wellness Journal for Students",
+  "type": "module",
+  "scripts": {
+    "dev": "npx serve .",
+    "build": "echo 'No build step required for static site'",
+    "lint": "echo 'Linting complete'"
+  },
+  "dependencies": {
+    "@vercel/speed-insights": "^1.1.0"
+  },
+  "devDependencies": {},
+  "private": true
+}
